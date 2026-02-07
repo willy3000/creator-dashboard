@@ -36,6 +36,8 @@
 
 // app.listen(PORT, () => console.log(`Server started  on port ${PORT}`));
 
+
+
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -44,43 +46,52 @@ const cookieParser = require("cookie-parser");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
-const app = express();
 dotenv.config();
+const app = express();
 
-// Body parsers
+// ===== Body parsers =====
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ===== CORS setup =====
-// If you want to allow all origins for testing (no credentials)
-app.use(
-  cors({
-    origin: "*", // Allow all domains
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  }),
-);
+// ===== CORS =====
+// For testing: allow all origins
+// If using credentials (cookies), replace "*" with an array of allowed origins
+app.use(cors({
+  origin: "*",  // or ["http://localhost:3000"] if using cookies
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: false, // true only if using cookies
+}));
 
-// Preflight for all routes (important for FormData requests)
+// Preflight requests for all routes
 app.options("*", cors());
 
-// If you want to allow credentials (cookies), replace origin "*" with an array of allowed origins
-// app.use(cors({
-//   origin: ["http://localhost:3000", "http://your-frontend.com"],
-//   credentials: true,
-//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-//   allowedHeaders: ["Content-Type", "Authorization"],
-// }));
-// app.options("*", cors({ origin: ["http://localhost:3000", "http://your-frontend.com"], credentials: true }));
-
-// Cookies
+// ===== Cookies =====
 app.use(cookieParser());
 
-// Routes
+// ===== Multer setup for file uploads =====
+const uploadFolder = "uploads";
+
+// Ensure the upload folder exists
+if (!fs.existsSync(uploadFolder)) {
+  fs.mkdirSync(uploadFolder);
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadFolder),
+  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname)),
+});
+const upload = multer({ storage });
+
+
+// Authentication routes
 app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/assets", require("./routes/api/assets"));
 
-// Start server
+// ===== Start server =====
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
