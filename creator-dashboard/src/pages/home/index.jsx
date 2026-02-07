@@ -8,7 +8,8 @@ import { Toaster, toast } from "sonner";
 import AuthGuard from "../../components/auth/AuthGuard";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { setAssets } from "../store/slices/assetsSlice";
+import { setAssets } from "@/store/slices/assetsSlice";
+
 import { BASE_URL } from "@/utils/constants";
 
 

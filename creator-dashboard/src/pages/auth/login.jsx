@@ -3,7 +3,7 @@ import axios from "axios";
 import { Eye, EyeOff, Github, Chrome, FolderOpen } from "lucide-react";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
-import { setUser } from "../store/slices/userSlice";
+import { setUser } from "../../store/slices/userSlice";
 import AuthGuardLogin from "../../components/auth/AuthGuardLogin";
 import { toast } from "sonner";
 import { BASE_URL } from "@/utils/constants";

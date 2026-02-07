@@ -3,7 +3,7 @@ import { X, Upload, CheckCircle2, AlertCircle, Trash2 } from "lucide-react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "sonner";
-import { setAssets } from "../pages/store/slices/assetsSlice";
+import { setAssets } from "../store/slices/assetsSlice";
 
 export default function UploadModal({ onClose, onUpload }) {
   const [formData, setFormData] = useState({
@@ -37,7 +37,7 @@ export default function UploadModal({ onClose, onUpload }) {
     }
   };
 
-    // Fetch Assets
+  // Fetch Assets
   const getAssets = async () => {
     if (!user?.userId) return;
     try {
