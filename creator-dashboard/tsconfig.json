@@ -24,6 +24,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "src/pages/auth/signup.js", "src/pages/auth/login.jsx", "src/pages/auth/signup.jsx"  ],
+, "src/pages/auth/signup.js", "src/pages/auth/login.jsx", "src/pages/auth/signup.jsx", "src/pages/_document.js", "src/pages/index.js", "src/pages/_app.js"  ],
   "exclude": ["node_modules"]
 }
