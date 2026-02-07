@@ -6,7 +6,7 @@ A creator dashboard for managing content and uploads, built with a Node.js backe
 
 ## 📦 Tech Stack
 
-* **Frontend:** Node.js (via Yarn)
+* **Frontend:** NextJS (via Yarn)
 * **Backend:** Node.js (via npm)
 * **Database:** MongoDB (local)
 
