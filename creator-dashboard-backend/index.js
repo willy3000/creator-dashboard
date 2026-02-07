@@ -17,7 +17,7 @@ var cors = require("cors");
 
 const corsOptions = {
   // origin: ["http://localhost:3000", "http://192.168.100.69:3000"],
-  origin: ["https://creator-dashboard-puce.vercel.app/"],
+  origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
