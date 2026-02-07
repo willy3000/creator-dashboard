@@ -1,108 +1,71 @@
-You’re right — the content is fine, it just needs **structure, spacing, and visual hierarchy** so GitHub renders it cleanly and professionally.
-
-Here’s a **clean, polished README** that keeps **exactly the same information**, just presented properly 👇
-
----
-
-# 🎨 Digital Realm – Creator Dashboard
+🎨 Digital Realm – Creator Dashboard
 
 A creator dashboard for managing content and uploads, built with a Node.js backend and MongoDB.
 
----
+📦 Tech Stack
 
-## 📦 Tech Stack
+Frontend: Node.js (via Yarn)
 
-* **Frontend:** Node.js (via Yarn)
-* **Backend:** Node.js (via npm)
-* **Database:** MongoDB (local)
+Backend: Node.js (via npm)
 
----
+Database: MongoDB (local)
 
-## ⚙️ Requirements
+⚙️ Requirements
 
 Make sure you have the following installed:
 
-* Node.js
-* npm
-* Yarn
-* MongoDB (running locally)
+Node.js
 
----
+npm
 
-## 🚀 Setup Instructions
+Yarn
 
-### 1️⃣ Clone the Repository
+MongoDB (running locally)
 
-```bash
+🚀 Setup Instructions
+1️⃣ Clone the Repository
 git clone git@github.com:willy3000/creator-dashboard.git
 cd creator-dashboard
-```
 
----
-
-### 2️⃣ Install Frontend Dependencies
-
-```bash
+2️⃣ Install Frontend Dependencies
 yarn
-```
 
----
-
-### 3️⃣ Install Backend Dependencies
-
-```bash
+3️⃣ Install Backend Dependencies
 cd creator-dashboard-backend
 npm install
-```
 
----
-
-## ▶️ Running the Application
-
-### Start the Frontend
+▶️ Running the Application
+Start the Frontend
 
 From the root project directory:
 
-```bash
 yarn dev
-```
 
----
-
-### Start the Backend
+Start the Backend
 
 From the backend directory:
 
-```bash
 cd creator-dashboard-backend
 npm run dev
-```
 
----
+🧪 Testing
 
-## 🧪 Testing
+No automated tests are currently implemented.
 
-* No automated tests are currently implemented.
+📌 Assumptions
 
----
+File uploads are expected to be under 100MB.
 
-## 📌 Assumptions
+⚖️ Trade-offs
 
-* File uploads are expected to be **under 100MB**.
+Feature completeness was prioritized over automated testing due to time constraints.
 
----
+🔧 Improvements With More Time
 
-## ⚖️ Trade-offs
+Support for larger file uploads
 
-* Feature completeness was prioritized over automated testing due to time constraints.
+Improved toast notifications
 
----
+Better error handling and user feedback
 
-## 🔧 Improvements With More Time
-
-* Support for larger file uploads
-* Improved toast notifications
-* Better error handling and user feedback
-* Enhanced loading states
-
----
+Enhanced loading states
