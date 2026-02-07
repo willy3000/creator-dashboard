@@ -7,7 +7,8 @@ import UploadModal from "../../components/UploadModal";
 import { Toaster, toast } from "sonner";
 import AuthGuard from "../../components/auth/AuthGuard";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setAssets } from "../store/slices/assetsSlice";
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -17,8 +18,9 @@ export default function Dashboard() {
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const { user } = useSelector((state) => state.user);
-  const [assets, setAssets] = useState([]);
+  const { assets } = useSelector((state) => state.assets);
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
   // Fetch Assets
   const getAssets = async () => {
@@ -29,7 +31,7 @@ export default function Dashboard() {
       const res = await axios.get(
         `http://localhost:5000/api/assets/getAssets/${user?.userId}`,
       );
-      setAssets(res.data.result);
+      dispatch(setAssets(res.data.result));
       console.log("assets are", res.data.assets);
     } finally {
       setIsLoading(false);
@@ -79,10 +81,7 @@ export default function Dashboard() {
       return bDate - aDate;
     };
 
-    return assets
-      .filter(matchesQuery)
-      .filter(matchesFilter)
-      .sort(compareBy);
+    return assets.filter(matchesQuery).filter(matchesFilter).sort(compareBy);
   }, [assets, searchQuery, filterType, sortBy]);
 
   return (

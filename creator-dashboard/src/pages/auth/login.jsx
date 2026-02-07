@@ -1,18 +1,17 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
-import { Eye, EyeOff, Github, Chrome } from "lucide-react";
+import { Eye, EyeOff, Github, Chrome, FolderOpen } from "lucide-react";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/slices/userSlice";
 import AuthGuardLogin from "../../components/auth/AuthGuardLogin";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const [toast, setToast] = useState(null);
-  const toastTimeoutRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
@@ -61,14 +60,11 @@ export default function LoginPage() {
   };
 
   const showToast = (type, message) => {
-    setToast({ type, message });
-    if (toastTimeoutRef.current) {
-      clearTimeout(toastTimeoutRef.current);
+    if (type === "success") {
+      toast.success(message);
+      return;
     }
-    toastTimeoutRef.current = setTimeout(() => {
-      setToast(null);
-      toastTimeoutRef.current = null;
-    }, 4000);
+    toast.error(message);
   };
 
   const handleSubmit = async (e) => {
@@ -120,24 +116,12 @@ export default function LoginPage() {
   return (
     <AuthGuardLogin>
       <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#0A0A0A] flex flex-col items-center justify-center p-4">
-        {toast && (
-          <div className="fixed top-6 right-6 z-50">
-            <div
-              className={`px-4 py-3 rounded-xl shadow-lg text-sm font-inter ${
-                toast.type === "success"
-                  ? "bg-emerald-500 text-white"
-                  : "bg-red-500 text-white"
-              }`}
-            >
-              {toast.message}
-            </div>
-          </div>
-        )}
         <div className="w-full max-w-[400px] space-y-8">
           <div className="text-center">
             <div className="w-12 h-12 bg-black dark:bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
-              <div className="w-6 h-6 border-2 border-white dark:border-black rounded-lg"></div>
+              <FolderOpen size={18} className="text-white dark:text-black" />
             </div>
+
             <h1 className="text-3xl font-sora font-bold text-black dark:text-white tracking-tight">
               Welcome back
             </h1>
@@ -278,7 +262,7 @@ export default function LoginPage() {
           </div>
 
           <p className="text-center text-xs text-[#999999] font-inter">
-            &copy; 2026 AssetsFlow Studio. All rights reserved.
+            &copy; 2026 Digital Realm Studio. All rights reserved.
           </p>
         </div>
       </div>

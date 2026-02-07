@@ -1,6 +1,8 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, FolderOpen } from "lucide-react";
+import { Toaster, toast } from "sonner";
+import { useRouter } from "next/router";
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,9 +15,8 @@ export default function SignupPage() {
   });
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const [toast, setToast] = useState(null);
-  const toastTimeoutRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const inputClass = (hasError) =>
     `w-full h-12 px-4 bg-[#F8F8F8] dark:bg-[#1A1A1A] border ${
@@ -76,14 +77,11 @@ export default function SignupPage() {
   };
 
   const showToast = (type, message) => {
-    setToast({ type, message });
-    if (toastTimeoutRef.current) {
-      clearTimeout(toastTimeoutRef.current);
+    if (type === "success") {
+      toast.success(message);
+      return;
     }
-    toastTimeoutRef.current = setTimeout(() => {
-      setToast(null);
-      toastTimeoutRef.current = null;
-    }, 4000);
+    toast.error(message);
   };
 
   const handleSubmit = async (e) => {
@@ -108,7 +106,7 @@ export default function SignupPage() {
     try {
       const res = await axios.post(
         "http://localhost:5000/api/auth/signUp",
-        formData
+        formData,
       );
       const message =
         res?.data?.message ??
@@ -120,6 +118,7 @@ export default function SignupPage() {
         return;
       }
       showToast("success", message);
+      router.push("/auth/login");
     } catch (error) {
       const message =
         error?.response?.data?.message ??
@@ -133,29 +132,16 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#0A0A0A] flex flex-col items-center justify-center p-4">
-      {toast && (
-        <div className="fixed top-6 right-6 z-50">
-          <div
-            className={`px-4 py-3 rounded-xl shadow-lg text-sm font-inter ${
-              toast.type === "success"
-                ? "bg-emerald-500 text-white"
-                : "bg-red-500 text-white"
-            }`}
-          >
-            {toast.message}
-          </div>
-        </div>
-      )}
-      <div className="w-full max-w-[400px] space-y-8">
+      <div className="w-full max-w-100 space-y-8">
         <div className="text-center">
           <div className="w-12 h-12 bg-black dark:bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
-            <div className="w-6 h-6 border-2 border-white dark:border-black rounded-lg"></div>
+            <FolderOpen size={18} className="text-white dark:text-black" />
           </div>
           <h1 className="text-3xl font-sora font-bold text-black dark:text-white tracking-tight">
             Create account
           </h1>
           <p className="text-[#999999] mt-2 font-inter">
-            Join 10k+ creators using AssetsFlow
+            Join 10k+ creators using Digital Realm Studio
           </p>
         </div>
 
@@ -172,9 +158,7 @@ export default function SignupPage() {
                 placeholder="Alex Rivet"
                 className={inputClass(touched.username && errors.username)}
                 value={formData.username}
-                onChange={(e) =>
-                  handleChange("username", e.target.value)
-                }
+                onChange={(e) => handleChange("username", e.target.value)}
                 onBlur={() => handleBlur("name")}
               />
               <p
@@ -201,9 +185,7 @@ export default function SignupPage() {
                 placeholder="alex@example.com"
                 className={inputClass(touched.email && errors.email)}
                 value={formData.email}
-                onChange={(e) =>
-                  handleChange("email", e.target.value)
-                }
+                onChange={(e) => handleChange("email", e.target.value)}
                 onBlur={() => handleBlur("email")}
               />
               <p
@@ -265,10 +247,12 @@ export default function SignupPage() {
                   required
                   placeholder="••••••••"
                   className={inputClass(
-                    touched.confirmPassword && errors.confirmPassword
+                    touched.confirmPassword && errors.confirmPassword,
                   )}
                   value={formData.confirmPassword}
-                  onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                  onChange={(e) =>
+                    handleChange("confirmPassword", e.target.value)
+                  }
                   onBlur={() => handleBlur("confirmPassword")}
                 />
                 <button

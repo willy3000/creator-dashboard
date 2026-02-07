@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 
 export default function Sidebar({ onClose }) {
   const [activeItem, setActiveItem] = useState("All Assets");
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { user } = useSelector((state) => state.user);
   const router = useRouter();
 
@@ -27,7 +28,10 @@ export default function Sidebar({ onClose }) {
     { name: "Documents", icon: FileText },
   ];
 
-  const handleLogOut = () => {
+  const handleLogOut = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     router.push("/auth/login");
@@ -41,7 +45,7 @@ export default function Sidebar({ onClose }) {
           <FolderOpen size={18} className="text-white dark:text-black" />
         </div>
         <span className="font-sora font-bold text-lg text-black dark:text-white">
-          AssetsFlow
+          Digital Realm
         </span>
       </div>
 
@@ -86,10 +90,13 @@ export default function Sidebar({ onClose }) {
       {/* User Area */}
       <div className="p-4 border-t border-[#EEEEEE] dark:border-[#222222]">
         <button
-          className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-[#F5F5F5] dark:hover:bg-[#1E1E1E] transition-all group"
-          onClick={() => {
-            handleLogOut();
-          }}
+          className={`w-full flex items-center gap-3 p-2 rounded-xl transition-all group ${
+            isLoggingOut
+              ? "opacity-70 cursor-not-allowed"
+              : "hover:bg-[#F5F5F5] dark:hover:bg-[#1E1E1E]"
+          }`}
+          onClick={handleLogOut}
+          disabled={isLoggingOut}
         >
           <div className="w-8 h-8 rounded-full bg-[#E5E5E5] dark:bg-[#2A2A2A] flex items-center justify-center">
             <User className="w-4 h-4 text-black dark:text-white" />
@@ -104,12 +111,18 @@ export default function Sidebar({ onClose }) {
             <p className="text-sm font-semibold text-black dark:text-white leading-none mb-1">
               {user?.username || "Guest"}
             </p>
-            <p className="text-[11px] text-[#999999]">Pro Plan</p>
+            <p className="text-[11px] text-[#999999]">
+              {isLoggingOut ? "Logging out..." : "creator"}
+            </p>
           </div>
-          <LogOut
-            size={16}
-            className="text-[#999999] group-hover:text-red-500 transition-colors"
-          />
+          {isLoggingOut ? (
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#999999] border-t-transparent" />
+          ) : (
+            <LogOut
+              size={16}
+              className="text-[#999999] group-hover:text-red-500 transition-colors"
+            />
+          )}
         </button>
       </div>
     </div>

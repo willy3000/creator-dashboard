@@ -4,7 +4,6 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 
-
 export default function UploadModal({ onClose, onUpload }) {
   const [formData, setFormData] = useState({
     name: "",
@@ -14,7 +13,7 @@ export default function UploadModal({ onClose, onUpload }) {
   const [file, setFile] = useState(null);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const {user} = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -55,6 +54,7 @@ export default function UploadModal({ onClose, onUpload }) {
         },
       });
       if (res.data.success) {
+        getUsers(user?.userId);
         return true;
       }
       return false;
