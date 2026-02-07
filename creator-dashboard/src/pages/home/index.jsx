@@ -22,12 +22,18 @@ export default function Dashboard() {
 
   // Fetch Assets
   const getAssets = async () => {
-    console.log("fetching assets for user", user);
-    const res = await axios.get(
-      `http://localhost:5000/api/assets/getAssets/${user?.userId}`,
-    );
-    setAssets(res.data.result);
-    console.log("assets are", res.data.assets);
+    if (!user?.userId) return;
+    setIsLoading(true);
+    try {
+      console.log("fetching assets for user", user);
+      const res = await axios.get(
+        `http://localhost:5000/api/assets/getAssets/${user?.userId}`,
+      );
+      setAssets(res.data.result);
+      console.log("assets are", res.data.assets);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleUpload = () => {};

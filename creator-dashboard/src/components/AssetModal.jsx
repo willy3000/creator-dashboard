@@ -83,7 +83,7 @@ export default function AssetModal({ asset, onClose, onDelete }) {
           </button>
           {asset.type === "image" ? (
             <img
-              src={asset.file_url || asset.thumbnail_url}
+              src={asset.file || asset.thumbnail_url}
               className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
               alt={asset.name}
             />
@@ -103,9 +103,9 @@ export default function AssetModal({ asset, onClose, onDelete }) {
                 <source src={asset.file} />
               </audio>
             </div>
-          ) : asset.file_url || asset.file ? (
+          ) : asset.file || asset.file ? (
             <iframe
-              src={asset.file_url || asset.file}
+              src={asset.file || asset.file}
               title={asset.name}
               className="w-full h-full min-h-75 rounded-lg shadow-lg bg-white dark:bg-[#0A0A0A]"
               allowFullScreen

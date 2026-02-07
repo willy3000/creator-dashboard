@@ -2,6 +2,7 @@ import { useState } from "react";
 import { X, Upload, CheckCircle2, AlertCircle, Trash2 } from "lucide-react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { toast } from "sonner";
 
 
 export default function UploadModal({ onClose, onUpload }) {
@@ -54,14 +55,12 @@ export default function UploadModal({ onClose, onUpload }) {
         },
       });
       if (res.data.success) {
-        // getInventoryItems();
-        // setFormData({ itemName: "", itemType: "", image: null });
-        // setSelectedImage(null);
-        // setImageFile(null);
-        // toast.success("Item Group Added");
+        return true;
       }
+      return false;
     } catch (err) {
-      alert(err.message);
+      setError(err.message || "Failed to upload asset.");
+      return false;
     }
   };
 
@@ -70,16 +69,20 @@ export default function UploadModal({ onClose, onUpload }) {
     if (!formData.name || !file) {
       setError("Please provide a name and select a file");
       return;
-    } else {
-      console.log("formData is", formData);
-      console.log("file is", file);
-      handleUploadFile();
     }
 
     setIsSubmitting(true);
     setError("");
 
     try {
+      console.log("formData is", formData);
+      console.log("file is", file);
+      const uploaded = await handleUploadFile();
+      if (!uploaded) {
+        setError("Failed to upload asset. Please try again.");
+        return;
+      }
+
       const payload = {
         name: formData.name,
         type: formData.type,
@@ -96,6 +99,7 @@ export default function UploadModal({ onClose, onUpload }) {
       };
 
       await onUpload(payload);
+      toast.success("Asset added successfully");
       onClose();
     } catch (err) {
       setError("Failed to upload asset. Please try again.");
@@ -247,7 +251,14 @@ export default function UploadModal({ onClose, onUpload }) {
                 disabled={isSubmitting}
                 className="flex-1 h-12 bg-black dark:bg-white text-white dark:text-black rounded-xl font-bold text-sm hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-black/10"
               >
-                {isSubmitting ? "Uploading..." : "Save Asset"}
+                {isSubmitting ? (
+                  <span className="inline-flex items-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white/70 dark:border-black/70 border-t-transparent rounded-full animate-spin" />
+                    Saving...
+                  </span>
+                ) : (
+                  "Save Asset"
+                )}
               </button>
             </div>
           </form>
