@@ -1,3 +1,41 @@
+// const express = require("express");
+// const jwt = require("jsonwebtoken");
+// const bcrypt = require("bcryptjs");
+// const dotenv = require("dotenv");
+// const cookieParser = require("cookie-parser");
+// const http = require("http");
+// const { Server } = require("socket.io");
+
+// const app = express();
+
+// dotenv.config();
+
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+
+// var cors = require("cors");
+
+// const corsOptions = {
+//   // origin: ["http://localhost:3000", "http://192.168.100.69:3000"],
+//   origin: "*",
+//   methods: ["GET", "POST", "PUT", "DELETE"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+
+//   credentials: true,
+// };
+
+// // app.use(cors());
+// app.use(cors(corsOptions));
+// app.use(cookieParser()); // Make sure this is used before your routes
+
+// //Authentication
+// app.use("/api/auth", require("./routes/api/auth"));
+// app.use("/api/assets", require("./routes/api/assets"));
+
+// const PORT = process.env.PORT || 5000;
+
+// app.listen(PORT, () => console.log(`Server started  on port ${PORT}`));
+
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -5,31 +43,44 @@ const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const http = require("http");
 const { Server } = require("socket.io");
+const cors = require("cors");
 
 const app = express();
-
 dotenv.config();
 
+// Body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-var cors = require("cors");
+// ===== CORS setup =====
+// If you want to allow all origins for testing (no credentials)
+app.use(
+  cors({
+    origin: "*", // Allow all domains
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 
-const corsOptions = {
-  // origin: ["http://localhost:3000", "http://192.168.100.69:3000"],
-  origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true,
-};
+// Preflight for all routes (important for FormData requests)
+app.options("*", cors());
 
-// app.use(cors());
-app.use(cors(corsOptions));
-app.use(cookieParser()); // Make sure this is used before your routes
+// If you want to allow credentials (cookies), replace origin "*" with an array of allowed origins
+// app.use(cors({
+//   origin: ["http://localhost:3000", "http://your-frontend.com"],
+//   credentials: true,
+//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+// }));
+// app.options("*", cors({ origin: ["http://localhost:3000", "http://your-frontend.com"], credentials: true }));
 
-//Authentication
+// Cookies
+app.use(cookieParser());
+
+// Routes
 app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/assets", require("./routes/api/assets"));
 
+// Start server
 const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => console.log(`Server started  on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
