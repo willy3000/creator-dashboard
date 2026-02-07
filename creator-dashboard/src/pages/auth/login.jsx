@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../store/slices/userSlice";
 import AuthGuardLogin from "../../components/auth/AuthGuardLogin";
 import { toast } from "sonner";
+import { BASE_URL } from "@/utils/constants";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -85,7 +86,7 @@ export default function LoginPage() {
     await new Promise((resolve) => setTimeout(resolve, 1500));
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/logIn",
+        `${BASE_URL}/api/auth/logIn`,
         formData,
       );
       const message =

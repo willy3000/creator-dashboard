@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { X, Upload, CheckCircle2, AlertCircle, Trash2 } from "lucide-react";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { toast } from "sonner";
+import { setAssets } from "../pages/store/slices/assetsSlice";
 
 export default function UploadModal({ onClose, onUpload }) {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ export default function UploadModal({ onClose, onUpload }) {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -32,6 +34,20 @@ export default function UploadModal({ onClose, onUpload }) {
         setFormData((prev) => ({ ...prev, type: "video" }));
       else if (selectedFile.type.startsWith("audio/"))
         setFormData((prev) => ({ ...prev, type: "audio" }));
+    }
+  };
+
+    // Fetch Assets
+  const getAssets = async () => {
+    if (!user?.userId) return;
+    try {
+      console.log("fetching assets for user", user);
+      const res = await axios.get(
+        `http://localhost:5000/api/assets/getAssets/${user?.userId}`,
+      );
+      dispatch(setAssets(res.data.result));
+      console.log("assets are", res.data.assets);
+    } finally {
     }
   };
 
@@ -54,7 +70,7 @@ export default function UploadModal({ onClose, onUpload }) {
         },
       });
       if (res.data.success) {
-        getUsers(user?.userId);
+        getAssets(user?.userId);
         return true;
       }
       return false;

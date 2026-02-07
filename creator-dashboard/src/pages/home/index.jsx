@@ -9,12 +9,14 @@ import AuthGuard from "../../components/auth/AuthGuard";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { setAssets } from "../store/slices/assetsSlice";
+import { BASE_URL } from "@/utils/constants";
+
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
-  const [sortBy, setSortBy] = useState("created_at");
+  const [sortBy, setSortBy] = useState("created_on");
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const { user } = useSelector((state) => state.user);
@@ -29,7 +31,7 @@ export default function Dashboard() {
     try {
       console.log("fetching assets for user", user);
       const res = await axios.get(
-        `http://localhost:5000/api/assets/getAssets/${user?.userId}`,
+        `${BASE_URL}/api/assets/getAssets/${user?.userId}`,
       );
       dispatch(setAssets(res.data.result));
       console.log("assets are", res.data.assets);
@@ -40,7 +42,27 @@ export default function Dashboard() {
 
   const handleUpload = () => {};
 
-  const handleDelete = () => {};
+  const handleDelete = async (assetId) => {
+    if (!user?.userId || !assetId) return;
+    try {
+      const res = await axios.delete(
+        `${BASE_URL}/api/assets/deleteAsset/${user?.userId}/${assetId}`,
+      );
+      if (res?.data?.success === false) {
+        toast.error(res?.data?.message || "Failed to delete asset.");
+        return;
+      }
+      setSelectedAsset(null);
+      getAssets();
+      toast.success(res?.data?.message || "Asset deleted successfully.");
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to delete asset.",
+      );
+    }
+  };
 
   useEffect(() => {
     getAssets();
@@ -76,8 +98,8 @@ export default function Dashboard() {
       if (sortBy === "size") {
         return (b.size || 0) - (a.size || 0);
       }
-      const aDate = new Date(a.created_at || a.created_on || 0).getTime();
-      const bDate = new Date(b.created_at || b.created_on || 0).getTime();
+      const aDate = new Date( a.created_on || 0).getTime();
+      const bDate = new Date( b.created_on || 0).getTime();
       return bDate - aDate;
     };
 

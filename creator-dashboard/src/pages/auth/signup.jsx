@@ -3,6 +3,7 @@ import axios from "axios";
 import { Eye, EyeOff, FolderOpen } from "lucide-react";
 import { Toaster, toast } from "sonner";
 import { useRouter } from "next/router";
+import { BASE_URL } from "@/utils/constants";
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -105,7 +106,7 @@ export default function SignupPage() {
     await new Promise((resolve) => setTimeout(resolve, 1500));
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/signUp",
+        `${BASE_URL}/api/auth/signUp`,
         formData,
       );
       const message =

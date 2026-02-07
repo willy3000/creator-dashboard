@@ -73,4 +73,30 @@ router.get(
   },
 );
 
+// Delete an asset for a given userId and assetId
+router.delete(
+  "/deleteAsset/:userId/:assetId",
+  // authenticateJWT,
+  async (req, res) => {
+    try {
+      const { userId, assetId } = req.params;
+      const removed = await assets.findOneAndDelete({ userId, id: assetId });
+
+      if (!removed) {
+        return res.json({
+          success: false,
+          message: "asset not found",
+        });
+      }
+
+      return res.json({
+        success: true,
+        message: "asset deleted successfully",
+      });
+    } catch (err) {
+      return res.json({ success: false, message: err });
+    }
+  },
+);
+
 module.exports = router;
