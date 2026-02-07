@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import AuthGuardLogin from "../../components/auth/AuthGuardLogin";
 
 export default function index() {
   const router = useRouter();
@@ -9,5 +10,9 @@ export default function index() {
     router.push("/auth/login");
   }, []);
 
-  return <></>;
+  return (
+    <AuthGuardLogin>
+      <></>
+    </AuthGuardLogin>
+  )
 }

@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Search, Bell, Plus, Menu, User } from "lucide-react";
+import { useSelector } from "react-redux";
 
 export default function Header({ onMenuClick, onUploadClick, onSearch }) {
   const [searchValue, setSearchValue] = useState("");
+
+  const { user } = useSelector((state) => state.user);
 
   const handleSearchChange = (e) => {
     const val = e.target.value;
@@ -53,7 +56,7 @@ export default function Header({ onMenuClick, onUploadClick, onSearch }) {
 
         <button className="hidden sm:flex items-center gap-2 p-1 pl-2 rounded-xl border border-transparent hover:border-[#EEEEEE] dark:hover:border-[#333333] hover:bg-[#F5F5F5] dark:hover:bg-[#1E1E1E] transition-all">
           <span className="text-sm font-semibold text-black dark:text-white">
-            Alex
+            {user?.username || "Guest"}
           </span>
 
           <div className="w-8 h-8 rounded-full bg-[#E5E5E5] dark:bg-[#2A2A2A] flex items-center justify-center">

@@ -40,11 +40,19 @@ export default function AssetCard({ asset, viewType, onClick, onDelete }) {
         className="flex items-center gap-4 p-3 bg-white dark:bg-[#1A1A1A] border border-[#EEEEEE] dark:border-[#333333] rounded-xl hover:border-black dark:hover:border-white transition-all cursor-pointer group"
       >
         <div className="w-12 h-12 rounded-lg overflow-hidden bg-[#F5F5F5] dark:bg-[#111111] flex items-center justify-center flex-shrink-0 border border-[#EEEEEE] dark:border-[#222222]">
-          {asset.thumbnail_url ? (
+          {asset.type === "image" && asset.file ? (
             <img
-              src={asset.thumbnail_url}
+              src={asset.file}
               className="w-full h-full object-cover"
               alt={asset.name}
+            />
+          ) : asset.type === "video" && asset.file ? (
+            <video
+              src={asset.file}
+              className="w-full h-full object-cover"
+              muted
+              loop
+              playsInline
             />
           ) : (
             <div className="text-[#999999]">{getIcon(asset.type)}</div>
@@ -61,14 +69,14 @@ export default function AssetCard({ asset, viewType, onClick, onDelete }) {
             </span>
             <span className="w-1 h-1 bg-[#DDDDDD] dark:bg-[#444444] rounded-full"></span>
             <span className="text-[11px] text-[#999999]">
-              {new Date(asset.created_at).toLocaleDateString()}
+              {new Date(asset.created_on).toLocaleDateString()}
             </span>
           </div>
         </div>
 
         <div className="flex items-center gap-4 px-4 hidden md:flex">
           <div className="flex -space-x-1">
-            {asset.tags?.slice(0, 2).map((tag, i) => (
+            {[...asset.tags]?.map((tag, i) => (
               <span
                 key={i}
                 className="px-2 py-1 bg-[#F5F5F5] dark:bg-[#222222] text-[10px] font-medium text-[#666666] dark:text-[#AAAAAA] rounded-full border border-[#EEEEEE] dark:border-[#333333]"
@@ -101,11 +109,19 @@ export default function AssetCard({ asset, viewType, onClick, onDelete }) {
       className="bg-white dark:bg-[#1A1A1A] border border-[#EEEEEE] dark:border-[#333333] rounded-2xl overflow-hidden hover:border-black dark:hover:border-white hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group"
     >
       <div className="aspect-video bg-[#F5F5F5] dark:bg-[#111111] relative overflow-hidden flex items-center justify-center">
-        {asset.thumbnail_url ? (
+        {asset.type === "image" && asset.file ? (
           <img
-            src={asset.thumbnail_url}
+            src={asset.file}
             className="w-full h-full object-cover transition-transform group-hover:scale-110"
             alt={asset.name}
+          />
+        ) : asset.type === "video" && asset.file ? (
+          <video
+            src={asset.file}
+            className="w-full h-full object-cover transition-transform group-hover:scale-110"
+            muted
+            loop
+            playsInline
           />
         ) : (
           <div className="text-[#999999] scale-150">{getIcon(asset.type)}</div>
@@ -141,11 +157,11 @@ export default function AssetCard({ asset, viewType, onClick, onDelete }) {
           {asset.name}
         </h4>
         <div className="flex items-center justify-between text-[#999999] text-xs">
-          <span>{new Date(asset.created_at).toLocaleDateString()}</span>
+          <span>{new Date(asset.created_on).toLocaleDateString()}</span>
           <span>{formatSize(asset.size)}</span>
         </div>
 
-        {asset.tags?.length > 0 && (
+        {[...asset.tags]?.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-3">
             {asset.tags.slice(0, 3).map((tag, i) => (
               <span

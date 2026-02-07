@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import {
   X,
   Download,
@@ -7,7 +8,25 @@ import {
   HardDrive,
   Hash,
   Type,
+  ImageIcon,
+  Video,
+  Music,
+  FileText,
+  Maximize2,
 } from "lucide-react";
+
+const getIcon = (type) => {
+  switch (type) {
+    case "image":
+      return <ImageIcon size={40} />;
+    case "video":
+      return <Video size={40} />;
+    case "audio":
+      return <Music size={40} />;
+    default:
+      return <FileText size={40} />;
+  }
+};
 
 const formatSize = (bytes) => {
   if (bytes === 0) return "0 B";
@@ -19,6 +38,20 @@ const formatSize = (bytes) => {
 
 export default function AssetModal({ asset, onClose, onDelete }) {
   if (!asset) return null;
+
+  const previewRef = useRef(null);
+
+  const toggleFullscreen = () => {
+    const el = previewRef.current;
+    if (!el) return;
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+      return;
+    }
+    if (el.requestFullscreen) {
+      el.requestFullscreen();
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8">
@@ -37,7 +70,17 @@ export default function AssetModal({ asset, onClose, onDelete }) {
         </button>
 
         {/* Left: Preview */}
-        <div className="flex-1 bg-[#F5F5F5] dark:bg-[#0A0A0A] flex items-center justify-center p-4 min-h-[300px]">
+        <div
+          ref={previewRef}
+          className="flex-1 bg-[#F5F5F5] dark:bg-[#0A0A0A] flex items-center justify-center p-4 min-h-[300px] relative"
+        >
+          <button
+            onClick={toggleFullscreen}
+            className="absolute top-4 left-4 z-10 p-2 bg-white/10 dark:bg-black/10 backdrop-blur-md rounded-full text-white md:text-[#666666] dark:md:text-[#888888] hover:bg-black/20 dark:hover:bg-white/20 transition-all"
+            aria-label="Toggle fullscreen"
+          >
+            <Maximize2 size={18} />
+          </button>
           {asset.type === "image" ? (
             <img
               src={asset.file_url || asset.thumbnail_url}
@@ -49,25 +92,28 @@ export default function AssetModal({ asset, onClose, onDelete }) {
               controls
               className="max-w-full max-h-full rounded-lg shadow-lg"
             >
-              <source src={asset.file_url} />
+              <source src={asset.file} />
             </video>
           ) : asset.type === "audio" ? (
             <div className="flex flex-col items-center gap-6 w-full max-w-md">
               <div className="w-32 h-32 bg-black dark:bg-white rounded-3xl flex items-center justify-center shadow-xl">
-                <img
-                  src={asset.thumbnail_url}
-                  className="w-full h-full object-cover rounded-3xl opacity-50"
-                  alt="Audio thumb"
-                />
+                <Music size={56} className="text-white dark:text-black" />
               </div>
               <audio controls className="w-full">
-                <source src={asset.file_url} />
+                <source src={asset.file} />
               </audio>
             </div>
+          ) : asset.file_url || asset.file ? (
+            <iframe
+              src={asset.file_url || asset.file}
+              title={asset.name}
+              className="w-full h-full min-h-75 rounded-lg shadow-lg bg-white dark:bg-[#0A0A0A]"
+              allowFullScreen
+            />
           ) : (
             <div className="flex flex-col items-center gap-4 text-[#999999]">
               <div className="w-24 h-24 bg-white dark:bg-[#1A1A1A] rounded-2xl flex items-center justify-center border border-[#EEEEEE] dark:border-[#333333]">
-                <Type size={40} />
+                {getIcon(asset.type)}
               </div>
               <span className="font-semibold">{asset.name}</span>
             </div>
@@ -100,7 +146,7 @@ export default function AssetModal({ asset, onClose, onDelete }) {
                   Added on
                 </p>
                 <p className="text-sm font-semibold text-black dark:text-white">
-                  {new Date(asset.created_at).toLocaleDateString(undefined, {
+                  {new Date(asset.created_on).toLocaleDateString(undefined, {
                     dateStyle: "long",
                   })}
                 </p>
@@ -130,7 +176,7 @@ export default function AssetModal({ asset, onClose, onDelete }) {
                   Tags
                 </p>
                 <div className="flex flex-wrap gap-1.5">
-                  {asset.tags?.map((tag, i) => (
+                  {[...asset.tags]?.map((tag, i) => (
                     <span
                       key={i}
                       className="px-2.5 py-1 bg-[#F5F5F5] dark:bg-[#1A1A1A] text-xs font-medium text-[#666666] dark:text-[#AAAAAA] rounded-lg border border-[#EEEEEE] dark:border-[#333333]"

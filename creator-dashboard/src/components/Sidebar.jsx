@@ -11,9 +11,13 @@ import {
   ChevronDown,
   User,
 } from "lucide-react";
+import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
 
 export default function Sidebar({ onClose }) {
   const [activeItem, setActiveItem] = useState("All Assets");
+  const { user } = useSelector((state) => state.user);
+  const router = useRouter();
 
   const navigationItems = [
     { name: "All Assets", icon: FolderOpen },
@@ -22,6 +26,12 @@ export default function Sidebar({ onClose }) {
     { name: "Audio", icon: Music },
     { name: "Documents", icon: FileText },
   ];
+
+  const handleLogOut = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    router.push("/auth/login");
+  };
 
   return (
     <div className="w-64 bg-white dark:bg-[#111111] border-r border-[#EEEEEE] dark:border-[#222222] flex flex-col h-full">
@@ -75,7 +85,12 @@ export default function Sidebar({ onClose }) {
 
       {/* User Area */}
       <div className="p-4 border-t border-[#EEEEEE] dark:border-[#222222]">
-        <button className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-[#F5F5F5] dark:hover:bg-[#1E1E1E] transition-all group">
+        <button
+          className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-[#F5F5F5] dark:hover:bg-[#1E1E1E] transition-all group"
+          onClick={() => {
+            handleLogOut();
+          }}
+        >
           <div className="w-8 h-8 rounded-full bg-[#E5E5E5] dark:bg-[#2A2A2A] flex items-center justify-center">
             <User className="w-4 h-4 text-black dark:text-white" />
             {/* <img
@@ -87,7 +102,7 @@ export default function Sidebar({ onClose }) {
 
           <div className="flex-1 text-left">
             <p className="text-sm font-semibold text-black dark:text-white leading-none mb-1">
-              Alex Rivet
+              {user?.username || "Guest"}
             </p>
             <p className="text-[11px] text-[#999999]">Pro Plan</p>
           </div>

@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { X, Upload, CheckCircle2, AlertCircle, Trash2 } from "lucide-react";
+import axios from "axios";
+import { useSelector } from "react-redux";
+
 
 export default function UploadModal({ onClose, onUpload }) {
   const [formData, setFormData] = useState({
@@ -10,6 +13,7 @@ export default function UploadModal({ onClose, onUpload }) {
   const [file, setFile] = useState(null);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const {user} = useSelector((state) => state.user);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -31,11 +35,45 @@ export default function UploadModal({ onClose, onUpload }) {
     }
   };
 
+  const handleUploadFile = async () => {
+    const fData = new FormData();
+
+    // Append the image file (assuming 'imageFile' is a File object)
+    fData.append("file", file);
+
+    // Append any additional data (assuming 'data' is an object)
+    Object.keys(formData).forEach((key) => {
+      fData.append(key, formData[key]);
+    });
+
+    try {
+      const url = `http://localhost:5000/api/assets/addAsset`;
+      const res = await axios.post(`${url}/${user?.userId}`, fData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (res.data.success) {
+        // getInventoryItems();
+        // setFormData({ itemName: "", itemType: "", image: null });
+        // setSelectedImage(null);
+        // setImageFile(null);
+        // toast.success("Item Group Added");
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !file) {
       setError("Please provide a name and select a file");
       return;
+    } else {
+      console.log("formData is", formData);
+      console.log("file is", file);
+      handleUploadFile();
     }
 
     setIsSubmitting(true);
@@ -218,6 +256,3 @@ export default function UploadModal({ onClose, onUpload }) {
     </div>
   );
 }
-
-
-

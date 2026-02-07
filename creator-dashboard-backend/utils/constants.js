@@ -4,6 +4,7 @@ const { v4 } = require("uuid");
 const cloudinary = require("cloudinary").v2;
 const db = require("monk")(process.env.MONGODB_URL);
 const notifications = db.get("notifications");
+const streamifier = require("streamifier");
 
 // Cloudinary Image Bucket Config
 cloudinary.config({
@@ -22,15 +23,34 @@ const formatDate = (date) => {
   });
 };
 
+const uploadImage = async (file) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "assets",
+        resource_type: "auto",
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      },
+    );
+
+    streamifier.createReadStream(file.buffer).pipe(stream);
+  });
+};
+
 //upload image to cloudinary bucket
-const uploadImage = async (image) => {
-  const base64String = `data:${image.mimetype};base64,${image.buffer.toString(
+const uploadFile = async (file) => {
+  console.log("the file is ", file);
+  const base64String = `data:${file.mimetype};base64,${file.buffer.toString(
     "base64",
   )}`;
 
   try {
     const result = await cloudinary.uploader.upload(base64String, {
-      folder: "inventory_images",
+      folder: "assets",
+      resource_type: "auto",
     });
     return result.url;
   } catch (err) {
@@ -410,7 +430,7 @@ const sendPermissionsEmail = (email, permissions, disabled) => {
     from: "willywario0@gmail.com",
     to: email,
     subject: "Permissions Update",
-    html:`
+    html: `
 <!DOCTYPE html>
 <html>
 <head>
@@ -440,7 +460,8 @@ const sendPermissionsEmail = (email, permissions, disabled) => {
               <!-- Permissions List -->
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:20px;">
                 ${Object.entries(permissions)
-                  .map(([key, value]) => `
+                  .map(
+                    ([key, value]) => `
                     <tr>
                       <td style="padding:12px;border-bottom:1px solid #eeeeee;">
                         <strong>${getPermissionsString(key)}</strong>
@@ -457,7 +478,8 @@ const sendPermissionsEmail = (email, permissions, disabled) => {
                         </span>
                       </td>
                     </tr>
-                  `)
+                  `,
+                  )
                   .join("")}
 
                 <!-- Account Status -->
@@ -498,7 +520,7 @@ const sendPermissionsEmail = (email, permissions, disabled) => {
   </table>
 </body>
 </html>
-`
+`,
   };
 
   try {

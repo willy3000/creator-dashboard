@@ -27,6 +27,7 @@ app.use(cookieParser()); // Make sure this is used before your routes
 
 //Authentication
 app.use("/api/auth", require("./routes/api/auth"));
+app.use("/api/assets", require("./routes/api/assets"));
 
 const PORT = process.env.PORT || 5000;
 
