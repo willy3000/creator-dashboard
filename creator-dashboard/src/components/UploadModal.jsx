@@ -4,7 +4,7 @@ import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "sonner";
 import { setAssets } from "../store/slices/assetsSlice";
-import BASE_URL from "../utils/constants";
+import { BASE_URL } from "@/utils/constants";
 
 export default function UploadModal({ onClose, onUpload }) {
   const [formData, setFormData] = useState({
