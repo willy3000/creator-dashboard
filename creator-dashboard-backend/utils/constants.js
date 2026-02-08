@@ -1,4 +1,3 @@
-const BASE_URL = "http://192.168.3.243:3000";
 const { v4 } = require("uuid");
 const cloudinary = require("cloudinary").v2;
 const db = require("monk")(process.env.MONGODB_URL);
