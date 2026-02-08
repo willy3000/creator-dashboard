@@ -4,6 +4,7 @@ import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "sonner";
 import { setAssets } from "../store/slices/assetsSlice";
+import BASE_URL from "../utils/constants";
 
 export default function UploadModal({ onClose, onUpload }) {
   const [formData, setFormData] = useState({
@@ -43,7 +44,7 @@ export default function UploadModal({ onClose, onUpload }) {
     try {
       console.log("fetching assets for user", user);
       const res = await axios.get(
-        `http://localhost:5000/api/assets/getAssets/${user?.userId}`,
+        `${BASE_URL}/api/assets/getAssets/${user?.userId}`,
       );
       dispatch(setAssets(res.data.result));
       console.log("assets are", res.data.assets);
@@ -63,7 +64,7 @@ export default function UploadModal({ onClose, onUpload }) {
     });
 
     try {
-      const url = `http://localhost:5000/api/assets/addAsset`;
+      const url = `${BASE_URL}/api/assets/addAsset`;
       const res = await axios.post(`${url}/${user?.userId}`, fData, {
         headers: {
           "Content-Type": "multipart/form-data",
