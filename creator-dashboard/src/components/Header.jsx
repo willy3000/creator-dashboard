@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search, Bell, Plus, Menu, User } from "lucide-react";
 import { useSelector } from "react-redux";
 
-export default function Header({ onMenuClick, onUploadClick, onSearch }) {
+export default function Header({
+  onMenuClick,
+  onUploadClick,
+  onSearch,
+}) {
   const [searchValue, setSearchValue] = useState("");
 
   const { user } = useSelector((state) => state.user);
@@ -12,6 +16,7 @@ export default function Header({ onMenuClick, onUploadClick, onSearch }) {
     setSearchValue(val);
     onSearch(val);
   };
+
 
   return (
     <header className="h-16 bg-white dark:bg-[#111111] border-b border-[#EEEEEE] dark:border-[#222222] flex items-center justify-between px-4 md:px-8 sticky top-0 z-30">
@@ -31,7 +36,6 @@ export default function Header({ onMenuClick, onUploadClick, onSearch }) {
           <input
             type="text"
             placeholder="Search assets, tags, or names..."
-            value={searchValue}
             onChange={handleSearchChange}
             className="w-full h-10 pl-10 pr-4 bg-[#F8F8F8] dark:bg-[#1A1A1A] border border-transparent focus:border-black dark:focus:border-white focus:bg-white dark:focus:bg-black rounded-xl text-sm font-inter transition-all outline-none"
           />

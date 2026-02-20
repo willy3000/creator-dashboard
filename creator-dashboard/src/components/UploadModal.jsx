@@ -19,23 +19,34 @@ export default function UploadModal({ onClose, onUpload }) {
   const dispatch = useDispatch();
 
   const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      if (!formData.name) {
-        setFormData((prev) => ({
-          ...prev,
-          name: selectedFile.name.split(".")[0],
-        }));
+    console.log("file changed", e.target.files);
+
+    const fileName = e.target.files[0]?.name || "";
+    const fileExtension = fileName.split(".").pop().toLowerCase();
+
+    if (fileExtension === "glb") {
+      const selectedFile = e.target.files[0];
+      if (selectedFile) {
+        setFile(selectedFile);
+        if (!formData.name) {
+          setFormData((prev) => ({
+            ...prev,
+            name: selectedFile.name.split(".")[0],
+          }));
+        }
+        // Infer type from file mime
+        if (selectedFile.type.startsWith("image/"))
+          setFormData((prev) => ({ ...prev, type: "image" }));
+        else if (selectedFile.type.startsWith("video/"))
+          setFormData((prev) => ({ ...prev, type: "video" }));
+        else if (selectedFile.type.startsWith("audio/"))
+          setFormData((prev) => ({ ...prev, type: "audio" }));
       }
-      // Infer type from file mime
-      if (selectedFile.type.startsWith("image/"))
-        setFormData((prev) => ({ ...prev, type: "image" }));
-      else if (selectedFile.type.startsWith("video/"))
-        setFormData((prev) => ({ ...prev, type: "video" }));
-      else if (selectedFile.type.startsWith("audio/"))
-        setFormData((prev) => ({ ...prev, type: "audio" }));
+    } else {
+      setError("improper file format. Please select a valid glb file.");
     }
+
+    console.log("file extension is", fileExtension);
   };
 
   // Fetch Assets
@@ -229,6 +240,7 @@ export default function UploadModal({ onClose, onUpload }) {
                     <option value="video">Video</option>
                     <option value="audio">Audio</option>
                     <option value="document">Document</option>
+                    <option value="3d object">3D Object</option>
                   </select>
                 </div>
                 <div>

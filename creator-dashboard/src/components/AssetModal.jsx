@@ -197,6 +197,7 @@ export default function AssetModal({ asset, onClose, onDelete }) {
               <Download size={18} />
               Download
             </button>
+
             <button className="h-11 flex items-center justify-center gap-2 border border-[#EEEEEE] dark:border-[#333333] text-black dark:text-white rounded-xl font-semibold text-sm hover:bg-[#F5F5F5] dark:hover:bg-[#1A1A1A] transition-all">
               <Edit2 size={18} />
               Edit
@@ -214,6 +215,3 @@ export default function AssetModal({ asset, onClose, onDelete }) {
     </div>
   );
 }
-
-
-

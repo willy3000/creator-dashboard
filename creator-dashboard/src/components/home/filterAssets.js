@@ -17,7 +17,7 @@ export function filterAssets({
 
   const normalizeType = (asset) => {
     const type = (asset.type || "").toLowerCase();
-    if (["image", "video", "audio"].includes(type)) return type;
+    if (["image", "video", "audio", "3d object"].includes(type)) return type;
     return "document";
   };
 

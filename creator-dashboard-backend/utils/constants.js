@@ -20,7 +20,7 @@ const formatDate = (date) => {
   });
 };
 
-const uploadImage = async (file) => {
+const uploadAsset = async (file) => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
@@ -60,7 +60,7 @@ const uploadFile = async (file) => {
 
 module.exports = {
   formatDate,
-  uploadImage,
+  uploadAsset,
   uploadFile,
 };
  2

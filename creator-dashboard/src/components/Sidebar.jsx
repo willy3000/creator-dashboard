@@ -19,6 +19,7 @@ export default function Sidebar({ onClose }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { user } = useSelector((state) => state.user);
   const router = useRouter();
+  // const [enabled, setEnabled] = useState(false);
 
   const navigationItems = [
     { name: "All Assets", icon: FolderOpen },
@@ -48,6 +49,24 @@ export default function Sidebar({ onClose }) {
           Digital Realm
         </span>
       </div>
+
+      {/* <label className="flex items-center space-x-3 cursor-pointer">
+        <span className="text-gray-700 font-medium">
+          {enabled ? "Notifications: ON" : "Notifications: OFF"}
+        </span>
+
+        <div
+          onClick={() => setEnabled(!enabled)}
+          className={`relative w-12 h-6 rounded-full transition-colors duration-300 
+        ${enabled ? "bg-green-500" : "bg-gray-300"}`}
+        >
+          <div
+            className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow
+          transition-transform duration-300
+          ${enabled ? "translate-x-6" : ""}`}
+          />
+        </div>
+      </label> */}
 
       {/* Navigation Menu */}
       <nav className="flex-1 px-4 py-2">

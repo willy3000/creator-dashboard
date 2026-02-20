@@ -1,5 +1,11 @@
 import { filterAssets } from "../components/home/filterAssets";
 
+
+// refactoring test 
+//currently passing all filter tests
+//failed one test because file type was improperly stored as vdeo instead f video
+//all tests pass after correction
+
 describe("filterAssets", () => {
   const assets = [
     {

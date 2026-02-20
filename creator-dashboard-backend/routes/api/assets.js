@@ -15,7 +15,7 @@ const assets = db.get("assets");
 const items = db.get("items");
 const assignments = db.get("assignments");
 const authenticateJWT = require("../../middleware/authenticate-jwt");
-const { uploadImage } = require("../../utils/constants");
+const { uploadImage, uploadAsset } = require("../../utils/constants");
 
 const nullValues = [null, "null", "undefined", undefined, ""];
 
@@ -33,7 +33,7 @@ router.post(
       created_on: new Date(),
       tags: req.body.tags.split(",").map((tag) => tag.trim()),
       size: req.file.size,
-      file: await uploadImage(req.file),
+      file: await uploadAsset(req.file),
     };
 
     console.log(assetDetails);

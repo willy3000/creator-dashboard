@@ -4,6 +4,7 @@ import { Eye, EyeOff, FolderOpen } from "lucide-react";
 import { Toaster, toast } from "sonner";
 import { useRouter } from "next/router";
 import { BASE_URL } from "@/utils/constants";
+import AuthGuardLogin from "@/components/auth/AuthGuardLogin";
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -105,10 +106,7 @@ export default function SignupPage() {
     setIsSubmitting(true);
     await new Promise((resolve) => setTimeout(resolve, 1500));
     try {
-      const res = await axios.post(
-        `${BASE_URL}/api/auth/signUp`,
-        formData,
-      );
+      const res = await axios.post(`${BASE_URL}/api/auth/signUp`, formData);
       const message =
         res?.data?.message ??
         (res?.data?.success
@@ -132,214 +130,219 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#0A0A0A] flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-100 space-y-8">
-        <div className="text-center">
-          <div className="w-12 h-12 bg-black dark:bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
-            <FolderOpen size={18} className="text-white dark:text-black" />
+    <AuthGuardLogin>
+      <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#0A0A0A] flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-100 space-y-8">
+          <div className="text-center">
+            <div className="w-12 h-12 bg-black dark:bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+              <FolderOpen size={18} className="text-white dark:text-black" />
+            </div>
+            <h1 className="text-3xl font-sora font-bold text-black dark:text-white tracking-tight">
+              Create account
+            </h1>
+            <p className="text-[#999999] mt-2 font-inter">
+              Join 10k+ creators using Digital Realm Studio
+            </p>
           </div>
-          <h1 className="text-3xl font-sora font-bold text-black dark:text-white tracking-tight">
-            Create account
-          </h1>
-          <p className="text-[#999999] mt-2 font-inter">
-            Join 10k+ creators using Digital Realm Studio
+
+          <div className="bg-white dark:bg-[#111111] p-8 rounded-[32px] border border-[#EEEEEE] dark:border-[#222222] shadow-sm">
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              <div>
+                <label className="block text-[10px] font-bold text-[#999999] uppercase tracking-wider mb-2 ml-1">
+                  Full Name
+                </label>
+                <input
+                  name="username"
+                  type="text"
+                  required
+                  placeholder="Alex Rivet"
+                  className={inputClass(touched.username && errors.username)}
+                  value={formData.username}
+                  onChange={(e) => handleChange("username", e.target.value)}
+                  onBlur={() => handleBlur("username")}
+                />
+                <p
+                  className={`text-[10px] mt-2 ml-1 ${
+                    touched.username && errors.username
+                      ? "text-red-500"
+                      : "text-[#999999]"
+                  }`}
+                >
+                  {touched.username && errors.username
+                    ? errors.username
+                    : "Use your real name so collaborators can find you."}
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-[#999999] uppercase tracking-wider mb-2 ml-1">
+                  Email Address
+                </label>
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="alex@example.com"
+                  className={inputClass(touched.email && errors.email)}
+                  value={formData.email}
+                  onChange={(e) => handleChange("email", e.target.value)}
+                  onBlur={() => handleBlur("email")}
+                />
+                <p
+                  className={`text-[10px] mt-2 ml-1 ${
+                    touched.email && errors.email
+                      ? "text-red-500"
+                      : "text-[#999999]"
+                  }`}
+                >
+                  {touched.email && errors.email
+                    ? errors.email
+                    : "We will only use this for account access."}
+                </p>
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-[#999999] uppercase tracking-wider mb-2 ml-1">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    placeholder="••••••••"
+                    className={inputClass(touched.password && errors.password)}
+                    value={formData.password}
+                    onChange={(e) => handleChange("password", e.target.value)}
+                    onBlur={() => handleBlur("password")}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999999] hover:text-black dark:hover:text-white transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+                <p
+                  className={`text-[10px] mt-2 ml-1 italic ${
+                    touched.password && errors.password
+                      ? "text-red-500"
+                      : "text-[#999999]"
+                  }`}
+                >
+                  {touched.password && errors.password
+                    ? errors.password
+                    : "Must be at least 8 characters"}
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-[#999999] uppercase tracking-wider mb-2 ml-1">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <input
+                    name="confirmPassword"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    placeholder="••••••••"
+                    className={inputClass(
+                      touched.confirmPassword && errors.confirmPassword,
+                    )}
+                    value={formData.confirmPassword}
+                    onChange={(e) =>
+                      handleChange("confirmPassword", e.target.value)
+                    }
+                    onBlur={() => handleBlur("confirmPassword")}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999999] hover:text-black dark:hover:text-white transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+                <p
+                  className={`text-[10px] mt-2 ml-1 ${
+                    touched.confirmPassword && errors.confirmPassword
+                      ? "text-red-500"
+                      : "text-[#999999]"
+                  }`}
+                >
+                  {touched.confirmPassword && errors.confirmPassword
+                    ? errors.confirmPassword
+                    : "Re-enter your password to confirm."}
+                </p>
+              </div>
+
+              <div className="px-1">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.terms}
+                    onChange={(e) => handleChange("terms", e.target.checked)}
+                    onBlur={() => handleBlur("terms")}
+                    className="w-4 h-4 rounded border-[#DDDDDD] dark:border-[#333333]"
+                  />
+                  <span className="text-xs text-[#999999]">
+                    I agree to the{" "}
+                    <a
+                      href="#"
+                      className="text-black dark:text-white underline"
+                    >
+                      Terms & Conditions
+                    </a>
+                  </span>
+                </div>
+                <p
+                  className={`text-[10px] mt-2 ml-1 ${
+                    touched.terms && errors.terms
+                      ? "text-red-500"
+                      : "text-[#999999]"
+                  }`}
+                >
+                  {touched.terms && errors.terms
+                    ? errors.terms
+                    : "Required to create your account."}
+                </p>
+              </div>
+
+              <button
+                disabled={isSubmitting}
+                className={`w-full h-12 rounded-xl font-bold text-sm transition-all shadow-lg shadow-black/10 ${
+                  isSubmitting
+                    ? "bg-black/80 dark:bg-white/80 text-white dark:text-black cursor-not-allowed"
+                    : "bg-black dark:bg-white text-white dark:text-black hover:opacity-90 active:scale-95"
+                }`}
+              >
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/70 border-t-transparent dark:border-black/70" />
+                    Creating account...
+                  </span>
+                ) : (
+                  "Create Account"
+                )}
+              </button>
+
+              <p className="text-center text-sm text-[#999999] mt-6">
+                Already have an account?{" "}
+                <a
+                  href="/auth/login"
+                  className="text-black dark:text-white font-bold hover:underline"
+                >
+                  Sign in
+                </a>
+              </p>
+            </form>
+          </div>
+
+          <p className="text-center text-xs text-[#999999] font-inter">
+            &copy; 2026 AssetsFlow Studio. All rights reserved.
           </p>
         </div>
-
-        <div className="bg-white dark:bg-[#111111] p-8 rounded-[32px] border border-[#EEEEEE] dark:border-[#222222] shadow-sm">
-          <form className="space-y-5" onSubmit={handleSubmit}>
-            <div>
-              <label className="block text-[10px] font-bold text-[#999999] uppercase tracking-wider mb-2 ml-1">
-                Full Name
-              </label>
-              <input
-                name="username"
-                type="text"
-                required
-                placeholder="Alex Rivet"
-                className={inputClass(touched.username && errors.username)}
-                value={formData.username}
-                onChange={(e) => handleChange("username", e.target.value)}
-                onBlur={() => handleBlur("name")}
-              />
-              <p
-                className={`text-[10px] mt-2 ml-1 ${
-                  touched.username && errors.username
-                    ? "text-red-500"
-                    : "text-[#999999]"
-                }`}
-              >
-                {touched.username && errors.username
-                  ? errors.username
-                  : "Use your real name so collaborators can find you."}
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-bold text-[#999999] uppercase tracking-wider mb-2 ml-1">
-                Email Address
-              </label>
-              <input
-                name="email"
-                type="email"
-                required
-                placeholder="alex@example.com"
-                className={inputClass(touched.email && errors.email)}
-                value={formData.email}
-                onChange={(e) => handleChange("email", e.target.value)}
-                onBlur={() => handleBlur("email")}
-              />
-              <p
-                className={`text-[10px] mt-2 ml-1 ${
-                  touched.email && errors.email
-                    ? "text-red-500"
-                    : "text-[#999999]"
-                }`}
-              >
-                {touched.email && errors.email
-                  ? errors.email
-                  : "We will only use this for account access."}
-              </p>
-            </div>
-            <div>
-              <label className="block text-[10px] font-bold text-[#999999] uppercase tracking-wider mb-2 ml-1">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  placeholder="••••••••"
-                  className={inputClass(touched.password && errors.password)}
-                  value={formData.password}
-                  onChange={(e) => handleChange("password", e.target.value)}
-                  onBlur={() => handleBlur("password")}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999999] hover:text-black dark:hover:text-white transition-colors"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-              <p
-                className={`text-[10px] mt-2 ml-1 italic ${
-                  touched.password && errors.password
-                    ? "text-red-500"
-                    : "text-[#999999]"
-                }`}
-              >
-                {touched.password && errors.password
-                  ? errors.password
-                  : "Must be at least 8 characters"}
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-bold text-[#999999] uppercase tracking-wider mb-2 ml-1">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <input
-                  name="confirmPassword"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  placeholder="••••••••"
-                  className={inputClass(
-                    touched.confirmPassword && errors.confirmPassword,
-                  )}
-                  value={formData.confirmPassword}
-                  onChange={(e) =>
-                    handleChange("confirmPassword", e.target.value)
-                  }
-                  onBlur={() => handleBlur("confirmPassword")}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999999] hover:text-black dark:hover:text-white transition-colors"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-              <p
-                className={`text-[10px] mt-2 ml-1 ${
-                  touched.confirmPassword && errors.confirmPassword
-                    ? "text-red-500"
-                    : "text-[#999999]"
-                }`}
-              >
-                {touched.confirmPassword && errors.confirmPassword
-                  ? errors.confirmPassword
-                  : "Re-enter your password to confirm."}
-              </p>
-            </div>
-
-            <div className="px-1">
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={formData.terms}
-                  onChange={(e) => handleChange("terms", e.target.checked)}
-                  onBlur={() => handleBlur("terms")}
-                  className="w-4 h-4 rounded border-[#DDDDDD] dark:border-[#333333]"
-                />
-                <span className="text-xs text-[#999999]">
-                  I agree to the{" "}
-                  <a href="#" className="text-black dark:text-white underline">
-                    Terms & Conditions
-                  </a>
-                </span>
-              </div>
-              <p
-                className={`text-[10px] mt-2 ml-1 ${
-                  touched.terms && errors.terms
-                    ? "text-red-500"
-                    : "text-[#999999]"
-                }`}
-              >
-                {touched.terms && errors.terms
-                  ? errors.terms
-                  : "Required to create your account."}
-              </p>
-            </div>
-
-            <button
-              disabled={isSubmitting}
-              className={`w-full h-12 rounded-xl font-bold text-sm transition-all shadow-lg shadow-black/10 ${
-                isSubmitting
-                  ? "bg-black/80 dark:bg-white/80 text-white dark:text-black cursor-not-allowed"
-                  : "bg-black dark:bg-white text-white dark:text-black hover:opacity-90 active:scale-95"
-              }`}
-            >
-              {isSubmitting ? (
-                <span className="flex items-center justify-center gap-2">
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/70 border-t-transparent dark:border-black/70" />
-                  Creating account...
-                </span>
-              ) : (
-                "Create Account"
-              )}
-            </button>
-
-            <p className="text-center text-sm text-[#999999] mt-6">
-              Already have an account?{" "}
-              <a
-                href="/auth/login"
-                className="text-black dark:text-white font-bold hover:underline"
-              >
-                Sign in
-              </a>
-            </p>
-          </form>
-        </div>
-
-        <p className="text-center text-xs text-[#999999] font-inter">
-          &copy; 2026 AssetsFlow Studio. All rights reserved.
-        </p>
       </div>
-    </div>
+    </AuthGuardLogin>
   );
 }
